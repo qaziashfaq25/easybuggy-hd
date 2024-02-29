@@ -1,14 +1,27 @@
-pipeline {
+pipeline{
     agent any
-    tools{
-        maven "Maven_3_5_2"
-    }
     stages{
-        stage('CompileandRunSonarAnalysis'){
+        stage("Cleaun up"){
             steps{
-               sh 'mvn clean verify sonar:sonar -Dsonar.projectkey=hack-dossier-1 -Dsonar.organization=hack-dossier-1 -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=50c443b41f08f49a50f5fdd1aa25ce9c16c7ca75'
-            }
+                deleteDir()
             }
         }
-    }
-
+        stage("Clone repo"){
+            steps{
+                sh "git clone https://github.com/qaziashfaq25/easybuggy-hd.git"
+            }
+        }
+        stage("Build"){
+            steps{
+                dir("easybuggy-hd")
+                    sh "mvn clean install"
+            }
+        }
+        stage("Test"){
+            steps {
+                dir("easybuggy-hd")
+                    sh "mvn test"
+            }
+        }
+        }   
+    }            
